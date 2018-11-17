@@ -7,13 +7,22 @@
 #ifndef FILTERFACTORY_H_
 #define FILTERFACTORY_H_
 
+#include <iostream>
 #include <opencv2/opencv.hpp>
+#include <nlohmann/json.hpp>
 
+//TODO: Is this a factory?
 class FilterFactory {
     public:
         FilterFactory();
         virtual ~FilterFactory();
-        static cv::Mat FourierTransform(cv::Mat input);
+        static void getDFT(cv::Mat& input, cv::Mat& output);
+        static void invertDFT(cv::Mat& source, cv::Mat& destination);
+        static void showDFT(cv::Mat& source);
+        static void recenterDFT(cv::Mat& source);
+        static void FourierFilter(cv::Mat input, nlohmann::json params);
+        static void GaussianBlur(cv::Mat input, nlohmann::json params);
+
 };
 
 #endif /* FILTERFACTORY_H_ */
