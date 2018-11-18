@@ -18,9 +18,12 @@ class FilterFactory {
         virtual ~FilterFactory();
         static void getDFT(cv::Mat& input, cv::Mat& output);
         static void invertDFT(cv::Mat& source, cv::Mat& destination);
+        static void applyDFTFilter(cv::Mat& source, cv::Mat& filter);
         static void showDFT(cv::Mat& source);
+        static void getDFTImage(cv::Mat& source, cv::Mat& destination);
+        static void saveDFTImage(cv::Mat& source, nlohmann::json params);
         static void recenterDFT(cv::Mat& source);
-        static void FourierFilter(cv::Mat input, nlohmann::json params);
+        static void FourierFilter(cv::Mat& input, nlohmann::json params);
         static void GaussianBlur(cv::Mat input, nlohmann::json params);
 
 };

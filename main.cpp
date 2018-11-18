@@ -4,8 +4,6 @@
 
 #include "FilterFactory.h"
 
-
-
 int main(int argc, char* argv[]) {
 
     if(argc == 1) {
@@ -42,6 +40,7 @@ int main(int argc, char* argv[]) {
 
     cv::Mat output = input.clone();
 
+    //TODO: Verify filter name.
     for(auto filter: filters) {
         if(filter["name"] == "gaussian") {
             FilterFactory::GaussianBlur(output, filter["params"]);
@@ -49,9 +48,13 @@ int main(int argc, char* argv[]) {
         if(filter["name"] == "fourier"){
             FilterFactory::FourierFilter(output, filter["params"]);
         }
+        if(filter["name"] == "dftImage") {
+            FilterFactory::saveDFTImage(output, filter["params"]);
+        }
     }
 
+    //TODO: Get the file extension
+    cv::imwrite(j["base"].get<std::string>() + "result.jpg", output);
     return 0;
 
 }
-
