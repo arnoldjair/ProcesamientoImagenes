@@ -1,13 +1,14 @@
 {
     "base": "/home/equipo/Desarrollo/ElectivaOptica/Taller1/Arnold/",
     "original": "Huskee.jpg",
-    "input": "2.jpg",
+    "input": "3.jpg",
+    "output": "fourier3.jpg",
     "filters": [
         {
             "name": "fourier",
             "params": {
                 "base": "/home/equipo/Desarrollo/ElectivaOptica/Taller1/Arnold/",
-                "filterImage": "filterImg.jpg"
+                "filterImage": "filter3.jpg"
             }
         }
     ]

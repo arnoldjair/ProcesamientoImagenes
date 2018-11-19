@@ -1,0 +1,43 @@
+{
+    "base": "/home/equipo/Desarrollo/ElectivaOptica/Taller1/Arnold/",
+    "original": "Huskee.jpg",
+    "input": "4.jpg",
+    "output": "4_result.jpg",
+    "filters": [
+        {
+            "name": "erode",
+            "params": {
+                "center": 1,
+                "type": "ellipse"
+            }
+        },
+        {
+            "name": "dilate",
+            "params": {
+                "center": 1,
+                "type": "ellipse"
+            }
+        },
+        {
+            "name": "invert",
+            "params": {
+                "center": 1,
+                "type": "ellipse"
+            }
+        },
+        {
+            "name": "erode",
+            "params": {
+                "center": 1,
+                "type": "ellipse"
+            }
+        },
+        {
+            "name": "invert",
+            "params": {
+                "center": 1,
+                "type": "ellipse"
+            }
+        }
+    ]
+}

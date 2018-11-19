@@ -29,10 +29,6 @@ int main(int argc, char* argv[]) {
         return -1;
     }
 
-    std::cout<<filters<<std::endl;
-    std::cout<<originalPath<<std::endl;
-    std::cout<<inputPath<<std::endl;
-
     if (!original.data || !input.data) {
         std::cout<<"No image data"<<std::endl;
         return -1;
@@ -41,6 +37,7 @@ int main(int argc, char* argv[]) {
     cv::Mat output = input.clone();
 
     //TODO: Verify filter name.
+    int curr = 1;
     for(auto filter: filters) {
         if(filter["name"] == "gaussian") {
             FilterFactory::GaussianBlur(output, filter["params"]);
@@ -51,10 +48,27 @@ int main(int argc, char* argv[]) {
         if(filter["name"] == "dftImage") {
             FilterFactory::saveDFTImage(output, filter["params"]);
         }
+        if(filter["name"] == "denoising") {
+            FilterFactory::denoising(output, filter["params"]);
+        }
+        if(filter["name"] == "erode") {
+            FilterFactory::erode(output, filter["params"]);
+        }
+        if(filter["name"] == "dilate") {
+            FilterFactory::dilate(output, filter["params"]);
+        }
+        if(filter["name"] == "invert") {
+            //FilterFactory::invert(output, filter["params"]);
+            cv::bitwise_not(output, output);
+        }
+        /*cv::imshow(std::to_string(curr) + filter["name"].get<std::string>(), output);
+        cv::waitKey();
+        curr++;*/
     }
 
-    //TODO: Get the file extension
-    cv::imwrite(j["base"].get<std::string>() + "result.jpg", output);
+    if(j.value("output", "") != "") {
+        cv::imwrite(j["base"].get<std::string>() + j["output"].get<std::string>(), output);
+    }
     return 0;
 
 }

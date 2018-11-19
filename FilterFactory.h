@@ -24,7 +24,11 @@ class FilterFactory {
         static void saveDFTImage(cv::Mat& source, nlohmann::json params);
         static void recenterDFT(cv::Mat& source);
         static void FourierFilter(cv::Mat& input, nlohmann::json params);
-        static void GaussianBlur(cv::Mat input, nlohmann::json params);
+        static void GaussianBlur(cv::Mat& input, nlohmann::json params);
+        static void denoising(cv::Mat& input, nlohmann::json params);
+        static void erode(cv::Mat& input, nlohmann::json params);
+        static void dilate(cv::Mat& input, nlohmann::json params);
+        static void invert(cv::Mat& input, nlohmann::json params);
 
 };
 

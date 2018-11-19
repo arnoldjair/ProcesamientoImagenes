@@ -126,8 +126,6 @@ void FilterFactory::FourierFilter(cv::Mat& input, nlohmann::json params) {
 
     std::string filterPath = params["base"].get<std::string>() + params["filterImage"].get<std::string>();
 
-    std::cout<<filterPath<<std::endl;
-
     //TODO: Change the name to layer.
     cv::Mat filterImage = cv::imread(filterPath, cv::IMREAD_GRAYSCALE);
     int rows = input.rows;
@@ -150,7 +148,7 @@ void FilterFactory::FourierFilter(cv::Mat& input, nlohmann::json params) {
 
 }
 
-void FilterFactory::GaussianBlur(cv::Mat input, nlohmann::json params){
+void FilterFactory::GaussianBlur(cv::Mat& input, nlohmann::json params){
     if(params["kernelSize"] == NULL) {
         std::cout<<"Parameter kernelSize is missing"<<std::endl;
         return;
@@ -168,8 +166,56 @@ void FilterFactory::GaussianBlur(cv::Mat input, nlohmann::json params){
         sigmaY = params["sigmaY"];
     }
 
-    std::cout<<params<<std::endl;
-
     cv::GaussianBlur(input, input, cv::Size(kernelSize, kernelSize), sigmaX, sigmaY);
 }
 
+void FilterFactory::denoising(cv::Mat& input, nlohmann::json params) {
+
+    cv::imshow("Original", input);
+    int templateWindowSize = params.value("templateWindowSize", 7);
+    int searchWindowSize = params.value("searchWindowSize", 21);
+    float h = params.value("h", 1);
+    cv::Mat result;
+    std::cout<<params<<std::endl;
+    cv::fastNlMeansDenoising(input, result, h, templateWindowSize, searchWindowSize);
+    input = result;
+}
+
+//TODO: size must not be divisble by 2 (?)
+void FilterFactory::erode(cv::Mat& input, nlohmann::json params){
+    int center = params.value("center", 1);
+    int size = 2 * center + 1;
+    cv::Mat element = cv::getStructuringElement(cv::MORPH_ELLIPSE,
+            cv::Size( size, size),
+            cv::Point( center, center) );
+    cv::Mat result;
+    cv::erode(input, result, element);
+    input = result;
+}
+
+void FilterFactory::dilate(cv::Mat& input, nlohmann::json params) {
+    int center = params.value("center", 1);
+    int size = 2 * center + 1;
+    std::string type = params.value("type", "ellipse");
+    int erosionType;
+
+    if(type == "rect") {
+        erosionType = cv::MORPH_RECT;
+    } else if (type == "cross") {
+        erosionType = cv::MORPH_CROSS;
+    } else {
+        erosionType = cv::MORPH_ELLIPSE;
+    }
+
+    cv::Mat element = cv::getStructuringElement(cv::MORPH_ELLIPSE,
+            cv::Size( size, size),
+            cv::Point( center, center) );
+    cv::Mat result;
+    cv::dilate(input, result, element);
+    input = result;
+}
+
+void FilterFactory::invert(cv::Mat& input, nlohmann::json params) {
+    cv::bitwise_not(input, input);
+
+}
