@@ -4,8 +4,29 @@
 
 #include "FilterFactory.h"
 
+using namespace cv;
 int main(int argc, char* argv[]) {
 
+    /*const char* filename = argc >=2 ? argv[1] : "2.jpg";
+
+    Mat I = imread(filename, CV_LOAD_IMAGE_GRAYSCALE);
+    if( I.empty())
+        return -1;
+
+    Mat complexI;
+    FilterFactory::getDFT(I, complexI);
+
+    cv::Mat planes[] = {Mat_<float>(complexI), Mat::zeros(complexI.size(), CV_32F)};
+    split(complexI, planes);                  
+    
+    cv::Mat inverseTransform;
+    FilterFactory::invertDFT(complexI, inverseTransform);
+    normalize(inverseTransform, inverseTransform, 0, 255, CV_MINMAX, CV_8UC1);
+    imshow("Reconstructed", inverseTransform);
+    waitKey();
+
+    return 0;*/
+    
     if(argc == 1) {
         std::cout<<"usage: ./ProcesamientoImagenes <archivo.json>"<<std::endl;
         return -1;
@@ -61,14 +82,12 @@ int main(int argc, char* argv[]) {
             //FilterFactory::invert(output, filter["params"]);
             cv::bitwise_not(output, output);
         }
-        /*cv::imshow(std::to_string(curr) + filter["name"].get<std::string>(), output);
-        cv::waitKey();
-        curr++;*/
     }
 
     if(j.value("output", "") != "") {
         cv::imwrite(j["base"].get<std::string>() + j["output"].get<std::string>(), output);
     }
+    
     return 0;
 
 }

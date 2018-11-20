@@ -19,45 +19,44 @@ void FilterFactory::getDFT(cv::Mat& input, cv::Mat& output){
       }
       }*/
 
-    cv::Mat padded;
-    int m = cv::getOptimalDFTSize(input.rows);
-    int n = cv::getOptimalDFTSize(input.cols);
+    cv::Mat padded;                            
+    int m = cv::getOptimalDFTSize( input.rows );
+    int n = cv::getOptimalDFTSize( input.cols ); 
     cv::copyMakeBorder(input, padded, 0, m - input.rows, 0, n - input.cols, cv::BORDER_CONSTANT, cv::Scalar::all(0));
     cv::Mat planes[] = {cv::Mat_<float>(padded), cv::Mat::zeros(padded.size(), CV_32F)};
     cv::Mat complexI;
-    cv::merge(planes, 2, complexI);
-    cv::dft(complexI, complexI,/* cv::DFT_COMPLEX_OUTPUT*/  cv::DFT_SCALE, input.rows);
-
+    cv::merge(planes, 2, complexI);         
+    cv::dft(complexI, complexI);            
     output = complexI;
 }
 
 void FilterFactory::invertDFT(cv::Mat& source, cv::Mat& destination) {
-    cv::Mat inverse;
-    cv::dft(source, inverse, cv::DFT_INVERSE | cv::DFT_REAL_OUTPUT);
-    destination = inverse;
+    cv::Mat inverseTransform;
+    cv::dft(source, inverseTransform, cv::DFT_INVERSE|cv::DFT_REAL_OUTPUT);
+    destination = inverseTransform;
 }
 
 void FilterFactory::applyDFTFilter(cv::Mat& source, cv::Mat& filter) {
-
     cv::Mat complexSource;
     cv::Mat complexFilter;
     cv::Mat complexFiltered;
     FilterFactory::recenterDFT(filter);
+    filter.convertTo(filter, CV_32F);
+    cv::normalize(filter, filter, 0, 1, cv::NORM_MINMAX);
     cv::Mat planes[2] = {cv::Mat_<float>(source.clone()), cv::Mat::zeros(source.size(), CV_32F)  };
 
-    filter.convertTo(filter, CV_32F);
-
     FilterFactory::getDFT(source, complexSource);
+
     cv::Mat planesFilter[2] = { cv::Mat_<float>(filter.clone()), cv::Mat::zeros(filter.size(), CV_32F)  };
     cv::merge(planesFilter, 2, complexFilter);
 
-    mulSpectrums(complexSource, complexFilter, complexFiltered, 0);
+    cv:: mulSpectrums(complexSource, complexFilter, complexFiltered, 0);
 
-    idft(complexFiltered, complexFiltered);
-    split(complexFiltered, planes);
-    source = planes[0];
-    source.convertTo(source, CV_8U);
-    normalize(source, source, 0, 255, cv::NORM_MINMAX);
+    FilterFactory::showDFT(complexFiltered);
+    cv::Mat inverseTransform;
+    FilterFactory::invertDFT(complexFiltered, inverseTransform);
+    normalize(inverseTransform, inverseTransform, 0, 255, cv::NORM_MINMAX, CV_8UC1);
+    source = inverseTransform;
 }
 
 void FilterFactory::showDFT(cv::Mat& source) {
@@ -97,6 +96,8 @@ void FilterFactory::saveDFTImage(cv::Mat& source, nlohmann::json params) {
 }
 
 void FilterFactory::recenterDFT(cv::Mat& source) {
+    source = source(cv::Rect(0, 0, source.cols & -2, source.rows & -2));
+
     int centerX = source.cols / 2;
     int centerY = source.rows / 2;
 
