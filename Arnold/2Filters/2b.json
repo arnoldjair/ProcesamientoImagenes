@@ -1,0 +1,19 @@
+{
+    "base": "/home/equipo/Desarrollo/ElectivaOptica/Taller1/Arnold/",
+    "original": "Huskee.jpg",
+    "input": "2.jpg",
+    "output": "2gfb_result.jpg",
+    "filters": [
+        {
+            "name": "butterWorth",
+            "params": {
+                "lowpass": 0,
+                "radius": 0.5,
+                "cuttingRadius": 0.5,
+                "order": 1
+            }
+        }
+    ]
+}
+
+

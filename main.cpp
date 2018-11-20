@@ -7,26 +7,6 @@
 using namespace cv;
 int main(int argc, char* argv[]) {
 
-    /*const char* filename = argc >=2 ? argv[1] : "2.jpg";
-
-    Mat I = imread(filename, CV_LOAD_IMAGE_GRAYSCALE);
-    if( I.empty())
-        return -1;
-
-    Mat complexI;
-    FilterFactory::getDFT(I, complexI);
-
-    cv::Mat planes[] = {Mat_<float>(complexI), Mat::zeros(complexI.size(), CV_32F)};
-    split(complexI, planes);                  
-    
-    cv::Mat inverseTransform;
-    FilterFactory::invertDFT(complexI, inverseTransform);
-    normalize(inverseTransform, inverseTransform, 0, 255, CV_MINMAX, CV_8UC1);
-    imshow("Reconstructed", inverseTransform);
-    waitKey();
-
-    return 0;*/
-    
     if(argc == 1) {
         std::cout<<"usage: ./ProcesamientoImagenes <archivo.json>"<<std::endl;
         return -1;
@@ -59,12 +39,13 @@ int main(int argc, char* argv[]) {
 
     //TODO: Verify filter name.
     int curr = 1;
+    std::string outputName;
     for(auto filter: filters) {
         if(filter["name"] == "gaussian") {
-            FilterFactory::GaussianBlur(output, filter["params"]);
+            FilterFactory::gaussianBlur(output, filter["params"]);
         }
         if(filter["name"] == "fourier"){
-            FilterFactory::FourierFilter(output, filter["params"]);
+            FilterFactory::fourierFilter(output, filter["params"]);
         }
         if(filter["name"] == "dftImage") {
             FilterFactory::saveDFTImage(output, filter["params"]);
@@ -79,15 +60,21 @@ int main(int argc, char* argv[]) {
             FilterFactory::dilate(output, filter["params"]);
         }
         if(filter["name"] == "invert") {
-            //FilterFactory::invert(output, filter["params"]);
             cv::bitwise_not(output, output);
+        }
+        if(filter["name"] == "butterWorth") {
+            FilterFactory::butterWorth(output, filter["params"]);
+        }
+
+        if(filter["params"].value("output", "") != "") {
+            cv::imwrite(j["base"].get<std::string>() + filter["params"]["output"].get<std::string>(), output);
         }
     }
 
     if(j.value("output", "") != "") {
         cv::imwrite(j["base"].get<std::string>() + j["output"].get<std::string>(), output);
     }
-    
+
     return 0;
 
 }

@@ -19,16 +19,19 @@ class FilterFactory {
         static void getDFT(cv::Mat& input, cv::Mat& output);
         static void invertDFT(cv::Mat& source, cv::Mat& destination);
         static void applyDFTFilter(cv::Mat& source, cv::Mat& filter);
+        static void applyButterWorthFilter(cv::Mat& source, int lowpass, float radius, float cuttingRadius, float order);
         static void showDFT(cv::Mat& source);
         static void getDFTImage(cv::Mat& source, cv::Mat& destination);
         static void saveDFTImage(cv::Mat& source, nlohmann::json params);
         static void recenterDFT(cv::Mat& source);
-        static void FourierFilter(cv::Mat& input, nlohmann::json params);
-        static void GaussianBlur(cv::Mat& input, nlohmann::json params);
+        static void fourierFilter(cv::Mat& input, nlohmann::json params);
+        static void gaussianBlur(cv::Mat& input, nlohmann::json params);
         static void denoising(cv::Mat& input, nlohmann::json params);
         static void erode(cv::Mat& input, nlohmann::json params);
         static void dilate(cv::Mat& input, nlohmann::json params);
         static void invert(cv::Mat& input, nlohmann::json params);
+        static void butterWorth(cv::Mat& input, nlohmann::json params);
+        static void getButterWorth(cv::Mat& source, int lowpass, float radius, float cuttingRadius, float order);
 
 };
 

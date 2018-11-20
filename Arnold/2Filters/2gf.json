@@ -1,0 +1,23 @@
+{
+    "base": "./",
+    "original": "Huskee.jpg",
+    "input": "2.jpg",
+    "filters": [
+        {
+            "name": "gaussian",
+            "params": {
+                "kernelSize": 9,
+                "sigmaX": 0,
+                "sigmaY": 0
+            }
+        },
+        {
+            "name": "fourier",
+            "params": {
+                "base": "./",
+                "filterImage": "2_gaussian_filter4.jpg",
+                "output": "2gf_result4.jpg"
+            }
+        }
+    ]
+}

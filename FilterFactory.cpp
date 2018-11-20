@@ -59,6 +59,32 @@ void FilterFactory::applyDFTFilter(cv::Mat& source, cv::Mat& filter) {
     source = inverseTransform;
 }
 
+//TODO: Only on apply
+void FilterFactory::applyButterWorthFilter(cv::Mat& source, int lowpass, float radius, float cuttingRadius, float order) {
+
+    cv::Mat complexSource;
+    cv::Mat complexFilter;
+    cv::Mat complexFiltered;
+    cv::Mat planes[2] = {cv::Mat_<float>(source.clone()), cv::Mat::zeros(source.size(), CV_32F)  };
+
+    FilterFactory::getDFT(source, complexSource);
+
+    complexFilter = complexSource.clone();
+
+    FilterFactory::getButterWorth(complexFilter, lowpass, radius, cuttingRadius, order);
+    FilterFactory::recenterDFT(complexSource);
+    cv:: mulSpectrums(complexSource, complexFilter, complexFiltered, 0);
+    FilterFactory::recenterDFT(complexFiltered);
+
+    FilterFactory::showDFT(complexFiltered);
+
+    cv::Mat inverseTransform;
+    FilterFactory::invertDFT(complexFiltered, inverseTransform);
+    normalize(inverseTransform, inverseTransform, 0, 255, cv::NORM_MINMAX, CV_8UC1);
+    source = inverseTransform;
+}
+
+
 void FilterFactory::showDFT(cv::Mat& source) {
     cv::Mat dftMagnitude;
     FilterFactory::getDFTImage(source, dftMagnitude);
@@ -80,19 +106,12 @@ void FilterFactory::getDFTImage(cv::Mat& source, cv::Mat& destination) {
 }
 
 void FilterFactory::saveDFTImage(cv::Mat& source, nlohmann::json params) {
-    if(params["image"] == NULL) {
-        std::cout<<"Parameter image is missing"<<std::endl;
-        return;
-    }
-
-    std::string path = params["base"].get<std::string>() + params["image"].get<std::string>();
-
     cv::Mat complexImage;
     cv::Mat dftImage;
     FilterFactory::getDFT(source, complexImage);
     FilterFactory::getDFTImage(complexImage, dftImage);
     normalize(dftImage, dftImage, 0, 255, CV_MINMAX, CV_8UC1);
-    imwrite(path, dftImage);
+    source = dftImage;
 }
 
 void FilterFactory::recenterDFT(cv::Mat& source) {
@@ -119,7 +138,7 @@ void FilterFactory::recenterDFT(cv::Mat& source) {
 
 
 
-void FilterFactory::FourierFilter(cv::Mat& input, nlohmann::json params) {
+void FilterFactory::fourierFilter(cv::Mat& input, nlohmann::json params) {
     if(params["filterImage"] == NULL) {
         std::cout<<"Parameter filterImage is missing"<<std::endl;
         return;
@@ -149,7 +168,7 @@ void FilterFactory::FourierFilter(cv::Mat& input, nlohmann::json params) {
 
 }
 
-void FilterFactory::GaussianBlur(cv::Mat& input, nlohmann::json params){
+void FilterFactory::gaussianBlur(cv::Mat& input, nlohmann::json params){
     if(params["kernelSize"] == NULL) {
         std::cout<<"Parameter kernelSize is missing"<<std::endl;
         return;
@@ -219,4 +238,53 @@ void FilterFactory::dilate(cv::Mat& input, nlohmann::json params) {
 void FilterFactory::invert(cv::Mat& input, nlohmann::json params) {
     cv::bitwise_not(input, input);
 
+}
+
+void FilterFactory::butterWorth(cv::Mat& input, nlohmann::json params){
+    int lowpass = params.value("lowpass", 0);
+    float radius = params.value("lowpass", 0.0);
+    float cuttingRadius = params.value("cuttingRadius", 0.0);
+    float order = params.value("order", 1.0);
+
+    int rows = input.rows;
+    int cols = input.cols;
+
+
+    FilterFactory::applyButterWorthFilter(input, lowpass, radius, cuttingRadius, order);
+
+    //Region of interest
+    cv::Rect roi(0, 0, cols, rows);
+
+    input = input(roi);
+}
+
+void FilterFactory::getButterWorth(cv::Mat& source, int lowpass, float radius, float cuttingRadius, float order) {
+    cv::Mat imageFilter(source.rows,source.cols,CV_32FC2);
+    cv::Point O;
+    O.x = int(imageFilter.cols/2);
+    O.y = int(imageFilter.rows/2);
+
+    imageFilter.setTo(0);
+
+    for(int i=0;i<imageFilter.rows;i++) {
+        float* ptr = (float*)imageFilter.ptr<float>(i);
+        for(int j=0;j<imageFilter.cols;j++) {
+            float radius = sqrt(float((j-O.x)*(j-O.x)) + float((i-O.y)*(i-O.y)));
+            if(lowpass == 1) {
+                ptr[2*j]= 1/(1+pow(radius/cuttingRadius,2*order));
+                ptr[2*j+1]=1/(1+pow(radius/cuttingRadius,2*order));
+
+            } else {
+                if(radius!=0) {
+                    ptr[2*j]= 1/(1+pow(cuttingRadius/radius,2*order));
+                    ptr[2*j+1]= 1/(1+pow(cuttingRadius/radius,2*order));
+                } else {
+                    ptr[2*j]=0;
+                    ptr[2*j+1]=0;
+                }
+            }
+        }
+    }
+
+    source = imageFilter;
 }

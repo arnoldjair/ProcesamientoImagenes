@@ -1,0 +1,13 @@
+{
+    "base": "/home/equipo/Desarrollo/ElectivaOptica/Taller1/Arnold/",
+    "original": "Huskee.jpg",
+    "input": "2.jpg",
+    "filters": [
+        {
+            "name": "dftImage",
+            "params": {
+                "output": "2_dft.jpg"
+            }
+        }
+    ]
+}
