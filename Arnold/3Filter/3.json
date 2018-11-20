@@ -1,0 +1,30 @@
+{
+    "base": "./",
+    "original": "Huskee.jpg",
+    "input": "3.jpg",
+    "output": "3_result.jpg",
+    "filters": [
+        {
+            "name": "denoising",
+            "params": {
+                "h": 19.0,
+                "templateWindowSize": 7,
+                "searchWindowSize": 21
+            }
+        },
+        {
+            "name": "erode",
+            "params": {
+                "center": 1,
+                "type": "ellipse"
+            }
+        },
+        {
+            "name": "dilate",
+            "params": {
+                "center": 1,
+                "type": "ellipse"
+            }
+        }
+    ]
+}

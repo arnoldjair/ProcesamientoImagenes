@@ -1,10 +1,38 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include <nlohmann/json.hpp>
+#include <stdint.h>
 
 #include "FilterFactory.h"
 
 using namespace cv;
+
+
+float euclideanDistance(cv::Mat img1, cv::Mat img2) {
+
+    int rows1 = img1.rows;
+    int cols1 = img1.cols;
+
+    int rows2 = img2.rows;
+    int cols2 = img2.cols;
+
+    if(rows1 != rows2 || cols1 != cols2) {
+        std::cout<<"Different sizes"<<std::endl;
+        return -1;
+    }
+
+    float sum = 0;
+
+    for(int i = 0; i < rows1; i++) {
+        for(int j = 0; j < cols1; j++) {
+            sum += pow(img1.at<uint8_t>(i, j) - img2.at<uint8_t>(i, j), 2);
+        }
+    }
+
+    sum = sqrt(sum);
+    return sum;
+}
+
 int main(int argc, char* argv[]) {
 
     if(argc == 1) {
@@ -69,6 +97,15 @@ int main(int argc, char* argv[]) {
         if(filter["params"].value("output", "") != "") {
             cv::imwrite(j["base"].get<std::string>() + filter["params"]["output"].get<std::string>(), output);
         }
+
+        cv::imshow(filter["name"], output);
+        cv::waitKey();
+    }
+
+    float distance = euclideanDistance(original, output);
+
+    if(distance >= 0) {
+        std::cout<<"Distance: "<<distance<<std::endl;
     }
 
     if(j.value("output", "") != "") {

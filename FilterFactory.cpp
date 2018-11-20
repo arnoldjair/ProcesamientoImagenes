@@ -205,7 +205,19 @@ void FilterFactory::denoising(cv::Mat& input, nlohmann::json params) {
 void FilterFactory::erode(cv::Mat& input, nlohmann::json params){
     int center = params.value("center", 1);
     int size = 2 * center + 1;
-    cv::Mat element = cv::getStructuringElement(cv::MORPH_ELLIPSE,
+    std::string type = params.value("type", "ellipse");
+    int erosionType;
+
+    if(type == "rect") {
+        erosionType = cv::MORPH_RECT;
+    } else if (type == "cross") {
+        erosionType = cv::MORPH_CROSS;
+    } else {
+        erosionType = cv::MORPH_ELLIPSE;
+    }
+
+
+    cv::Mat element = cv::getStructuringElement(erosionType,
             cv::Size( size, size),
             cv::Point( center, center) );
     cv::Mat result;
@@ -227,7 +239,7 @@ void FilterFactory::dilate(cv::Mat& input, nlohmann::json params) {
         erosionType = cv::MORPH_ELLIPSE;
     }
 
-    cv::Mat element = cv::getStructuringElement(cv::MORPH_ELLIPSE,
+    cv::Mat element = cv::getStructuringElement(erosionType,
             cv::Size( size, size),
             cv::Point( center, center) );
     cv::Mat result;

@@ -1,0 +1,43 @@
+{
+    "base": "./",
+    "original": "Huskee.jpg",
+    "input": "4.jpg",
+    "output": "4_result.jpg",
+    "filters": [
+        {
+            "name": "erode",
+            "params": {
+                "center": 1,
+                "type": "cross"
+            }
+        },
+        {
+            "name": "dilate",
+            "params": {
+                "center": 1,
+                "type": "cross"
+            }
+        },
+        {
+            "name": "invert",
+            "params": {
+                "center": 1,
+                "type": "cross"
+            }
+        },
+        {
+            "name": "erode",
+            "params": {
+                "center": 1,
+                "type": "cross"
+            }
+        },
+        {
+            "name": "invert",
+            "params": {
+                "center": 1,
+                "type": "cross"
+            }
+        }
+    ]
+}
