@@ -1,0 +1,16 @@
+{
+    "base": "/home/equipo/Desarrollo/ElectivaOptica/Taller1/Arnold/",
+    "original": "Huskee.jpg",
+    "input": "1.jpg",
+    "output": "result.jpg",
+    "filters": [
+        {
+            "name": "wiener",
+            "params": {
+                "nsr": 10,
+                "radius": 10
+            }
+        }
+        
+    ]
+}

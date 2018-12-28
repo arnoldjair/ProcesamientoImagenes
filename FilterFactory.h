@@ -16,6 +16,10 @@ class FilterFactory {
     public:
         FilterFactory();
         virtual ~FilterFactory();
+        
+        /**
+         * Frequency
+         */
         static void getDFT(cv::Mat& input, cv::Mat& output);
         static void invertDFT(cv::Mat& source, cv::Mat& destination);
         static void applyDFTFilter(cv::Mat& source, cv::Mat& filter);
@@ -25,13 +29,18 @@ class FilterFactory {
         static void saveDFTImage(cv::Mat& source, nlohmann::json params);
         static void recenterDFT(cv::Mat& source);
         static void fourierFilter(cv::Mat& input, nlohmann::json params);
+        static void butterWorth(cv::Mat& input, nlohmann::json params);
+        static void getButterWorth(cv::Mat& source, int lowpass, float radius, float cuttingRadius, float order);
+        
+        /*
+         * Spatial
+         */
         static void gaussianBlur(cv::Mat& input, nlohmann::json params);
         static void denoising(cv::Mat& input, nlohmann::json params);
         static void erode(cv::Mat& input, nlohmann::json params);
         static void dilate(cv::Mat& input, nlohmann::json params);
         static void invert(cv::Mat& input, nlohmann::json params);
-        static void butterWorth(cv::Mat& input, nlohmann::json params);
-        static void getButterWorth(cv::Mat& source, int lowpass, float radius, float cuttingRadius, float order);
+        
 
 };
 

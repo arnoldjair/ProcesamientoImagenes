@@ -40,9 +40,11 @@ void FilterFactory::applyDFTFilter(cv::Mat& source, cv::Mat& filter) {
     cv::Mat complexSource;
     cv::Mat complexFilter;
     cv::Mat complexFiltered;
+    
     FilterFactory::recenterDFT(filter);
     filter.convertTo(filter, CV_32F);
     cv::normalize(filter, filter, 0, 1, cv::NORM_MINMAX);
+    
     cv::Mat planes[2] = {cv::Mat_<float>(source.clone()), cv::Mat::zeros(source.size(), CV_32F)  };
 
     FilterFactory::getDFT(source, complexSource);
